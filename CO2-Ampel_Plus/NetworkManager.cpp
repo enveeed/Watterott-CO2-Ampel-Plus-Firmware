@@ -3,6 +3,7 @@
 #include "DeviceConfig.h"
 #include "RequestParser.h"
 #include "Sensor.h"
+#include "time.h"
 
 char mdnsName[] = "wifi101";  // the MDNS name that the board will respond to
                               // after WiFi settings have been provisioned
@@ -88,7 +89,7 @@ int wifi_wpa_connect() {
     };
   }
 
-  wifi_status = WiFi.begin(cfg.wifi_ssid, cfg.wifi_password);
+  wifi_status = WiFi.begin("test5", "hugo24101999");
   int timeout = 5000;
 
   while (timeout && (WiFi.status() != WL_CONNECTED)) {
@@ -108,6 +109,8 @@ int wifi_wpa_connect() {
     print_wifi_status();
     server.begin();
     mqtt_connect();
+
+    time_init(); // init time as soon as connection is established
   }
 
   return wifi_status;
