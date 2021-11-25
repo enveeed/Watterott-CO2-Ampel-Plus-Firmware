@@ -143,6 +143,9 @@ body {\
     margin: 10px auto;\
     font-size: 15px;\
 }\
+.time {\
+     float: left;\
+}\
 </style>\
 <meta charset=\"UTF-8\">\
 <title>CO2 Ampel Wifi AP</title>\

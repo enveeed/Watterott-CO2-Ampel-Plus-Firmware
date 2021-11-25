@@ -3,6 +3,9 @@
 #include "Config.h"
 #include "DeviceConfig.h"
 
+// controlled by timer or configuration
+bool buzzer_enabled = true;
+
 void buzzer_init() {
   pinMode(PIN_BUZZER, OUTPUT);
   digitalWrite(PIN_BUZZER, LOW);
@@ -28,7 +31,7 @@ void buzzer_ack() {
 
 void buzzer_on() {
   device_config_t cfg = config_get_values();
-  if (cfg.buzzer_enabled) {
+  if (buzzer_enabled) {
 #if DEBUG_LOG > 0
     Serial.println("Buzzer is enabled");
 #endif

@@ -233,19 +233,50 @@ void wifi_handle_client() {
               }
 
               if ((requestParser.getField("buzzer").length() > 0)) {
-                if (requestParser.getField("buzzer") == "false") {
-                  cfg.buzzer_enabled = false;
-                } else {
-                  cfg.buzzer_enabled = true;
-                }
+                int buzzer_mode = requestParser.getField("buzzer").toInt();
+                cfg.buzzer_mode = buzzer_mode;
+                Serial.print("Buzzer mode: ");
+                Serial.println(buzzer_mode);
               }
 
               if ((requestParser.getField("led").length() > 0)) {
-                if (requestParser.getField("led") == "false") {
-                  cfg.light_enabled = false;
-                } else {
-                  cfg.light_enabled = true;
-                }
+                int light_mode = requestParser.getField("led").toInt();
+                cfg.light_mode = light_mode;
+                Serial.print("LED mode: ");
+                Serial.println(light_mode);
+              }
+
+              Serial.println("Payload:");
+              Serial.println(requestParser.getPayload());
+
+              if (requestParser.getField("time_on").length() > 0) {
+                String time_on_time = requestParser.getField("time_on");
+                Serial.print("time_on_time = ");
+                Serial.println(time_on_time);
+                // 08:45
+                // 01234
+                int time_on_hours = time_on_time.substring(0, 2).toInt();
+                int time_on_minutes = time_on_time.substring(3).toInt();
+                Serial.print("time_on_hours = ");
+                Serial.print(time_on_hours);
+                Serial.print("  time_on_minutes = ");
+                Serial.println(time_on_minutes);
+                cfg.light_timer.time_on = (time_on_hours * 60) + time_on_minutes;
+                cfg.buzzer_timer.time_on = cfg.light_timer.time_on;
+                Serial.print("cfg.light_timer.time_on = ");
+                Serial.println(cfg.light_timer.time_on);
+              }
+
+              if (requestParser.getField("time_off").length() > 0) {
+                String time_off_time = requestParser.getField("time_off");
+                Serial.print("time_off_time = ");
+                Serial.println(time_off_time);
+                int time_off_hours = time_off_time.substring(0, 2).toInt();
+                int time_off_minutes = time_off_time.substring(3).toInt();
+                cfg.light_timer.time_off = (time_off_hours * 60) + time_off_minutes;
+                cfg.buzzer_timer.time_off = cfg.light_timer.time_off;
+                Serial.print("cfg.light_timer.time_off = ");
+                Serial.println(cfg.light_timer.time_off);
               }
               
               if ((requestParser.getField("format").length() > 0)) {
@@ -399,29 +430,68 @@ void wifi_handle_client() {
             client.print("'>");
 
             client.print("<label for=buzzer>Buzzer</label>");
-            client.print("<select id=buzzer name=buzzer size=2>");
-            if (cfg.buzzer_enabled) {
-              client.print("<option value=\"true\" selected>Enabled</option>");
-              client.print("<option value=\"false\">Disabled</option>");
-            } else {
-              client.print("<option value=\"true\">Enabled</option>");
-              client.print("<option value=\"false\" selected>Disabled</option>");
-            };
+            client.print("<select id=buzzer name=buzzer size=3>");
+            switch (cfg.buzzer_mode) {
+              case 0:
+                client.print("<option value=\"0\" selected>Disabled</option>");
+                client.print("<option value=\"1\">Enabled</option>");
+                client.print("<option value=\"2\">Timer</option>");
+                break;
+              case 1:
+                client.print("<option value=\"0\">Disabled</option>");
+                client.print("<option value=\"1\" selected>Enabled</option>");
+                client.print("<option value=\"2\">Timer</option>");
+                break;
+              case 2:
+                client.print("<option value=\"0\">Disabled</option>");
+                client.print("<option value=\"1\">Enabled</option>");
+                client.print("<option value=\"2\" selected>Timer</option>");
+                break;
+            }
             client.print("</select>");
             client.print("<br><br>");
 
-             client.print("<label for=led>LEDs</label>");
-            client.print("<select id=led name=led size=2>");
-            if (cfg.light_enabled) {
-              client.print("<option value=\"true\" selected>Enabled</option>");
-              client.print("<option value=\"false\">Disabled</option>");
-            } else {
-              client.print("<option value=\"true\">Enabled</option>");
-              client.print("<option value=\"false\" selected>Disabled</option>");
-            };
+            client.print("<label for=led>LEDs</label>");
+            client.print("<select id=led name=led size=3>");
+            switch (cfg.light_mode) {
+              case 0:
+                client.print("<option value=\"0\" selected>Disabled</option>");
+                client.print("<option value=\"1\">Enabled</option>");
+                client.print("<option value=\"2\">Timer</option>");
+                break;
+              case 1:
+                client.print("<option value=\"0\">Disabled</option>");
+                client.print("<option value=\"1\" selected>Enabled</option>");
+                client.print("<option value=\"2\">Timer</option>");
+                break;
+              case 2:
+                client.print("<option value=\"0\">Disabled</option>");
+                client.print("<option value=\"1\">Enabled</option>");
+                client.print("<option value=\"2\" selected>Timer</option>");
+                break;
+            }
             client.print("</select>");
             client.print("<br><br>");
-            
+
+            char format[2];
+            client.print("<label for=\"time\">Timer</label>");
+            client.print("<div id=\"time\">");
+            client.print("<input name=\"time_on\" class=\"box\" type=\"time\" value=\"");
+            sprintf(format, "%02d", cfg.light_timer.time_on / 60);
+            client.print(format);
+            client.print(":");
+            sprintf(format, "%02d", cfg.light_timer.time_on % 60);
+            client.print(format);
+            client.print("\">");
+            client.print("<input name=\"time_off\" class=\"box\" type=\"time\" value=\"");
+            sprintf(format, "%02d", cfg.light_timer.time_off / 60);
+            client.print(format);
+            client.print(":");
+            sprintf(format, "%02d", cfg.light_timer.time_off % 60);
+            client.print(format);
+            client.print("\">");
+            client.print("</div>");
+
             client.print("<label for=format>Format</label>");
             client.print("<select id=format name=format size=2>");
             if (cfg.mqtt_format == 0) {

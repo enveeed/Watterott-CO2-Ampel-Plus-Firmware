@@ -3,6 +3,12 @@
 #include <FlashStorage.h>
 
 typedef struct {
+  // minutes of the day (0 - 1440)
+  int time_on;
+  int time_off;
+} device_config_timer_t;
+
+typedef struct {
   int change_count;
   char wifi_ssid[40];
   char wifi_password[40];
@@ -15,8 +21,10 @@ typedef struct {
   char mqtt_username[20];
   char mqtt_password[20];
   int mqtt_format;
-  bool light_enabled;
-  bool buzzer_enabled;
+  int light_mode;
+  int buzzer_mode;
+  device_config_timer_t light_timer;
+  device_config_timer_t buzzer_timer;
 } device_config_t;
 
 void config_set_factory_defaults();

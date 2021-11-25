@@ -2,6 +2,8 @@
 #define LED_H
 #include <Arduino.h>
 
+extern bool led_enabled;
+
 extern byte led_tick;
 // void led_pulse();
 void fill_led_by_led(uint32_t color);
@@ -21,6 +23,8 @@ void led_adjust_brightness(byte brightness);
 void led_broker_connection_fail();
 
 void led_blink(uint32_t color, int intervall);
+
+void led_toggle_device_mode(int mode);
 
 void led_update();
 void led_wpa_connecting_tick(bool is_on);

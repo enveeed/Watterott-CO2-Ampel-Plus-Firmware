@@ -21,6 +21,7 @@
   ertoent.
 */
 #include <Arduino.h>
+#include <Scheduler.h>
 #include <JC_Button.h>
 #include <WiFi101.h>
 #include "Buzzer.h"
@@ -30,6 +31,8 @@
 #include "NetworkManager.h"
 #include "Sensor.h"
 #include "MQTTManager.h"
+#include "timer.h"
+#include "toggle.h"
 
 byte wifi_state = WIFI_MODE_WPA_CONNECT;
 const byte BUTTON_PIN(PIN_SWITCH);
@@ -72,6 +75,12 @@ void setup() {
   buzzer_test();
 
   sensor_init();
+
+  timer_init();
+
+  // setup toggle
+  //Scheduler.startLoop(button_loop);
+
   /**
    * Factory Reset when button is pressed while reset
    */
@@ -138,4 +147,13 @@ void loop() {
   wifi_handle_client();
   sensor_handler();
   sensor_handle_brightness();
+
+  timer_loop();
+  //yield();
+}
+
+void button_loop() {
+
+  //toggle_loop(modeButton); todo: turn this one when we have proper button control
+  yield();
 }

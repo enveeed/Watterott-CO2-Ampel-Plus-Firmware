@@ -8,6 +8,9 @@
 Adafruit_NeoPixel ws2812 = Adafruit_NeoPixel(NUMBER_OF_WS2312_PIXELS,
                                              PIN_WS2812,
                                              NEO_GRB + NEO_KHZ800);
+// controlled by timer or configuration
+bool led_enabled = true;
+
 byte connecting_tick = 0;
 byte led_tick = 0;
 byte led_brightness = BRIGHTNESS;
@@ -97,7 +100,7 @@ void led_set_color(uint32_t color) {
 
 void led_set_brightness() {
   device_config_t cfg = config_get_values();
-  if (cfg.light_enabled || ap_is_active()) {
+  if (led_enabled || ap_is_active()) {
     ws2812.setBrightness(led_brightness);
   } else {
     ws2812.setBrightness(0);
@@ -122,11 +125,52 @@ void led_blink(uint32_t color, int intervall) {
   delay(intervall);
 }
 
+// this will always be visible regardless of config
+void led_toggle_device_mode(int mode) {
+  uint32_t color;
+  switch (mode) {
+    case 0:
+      color = 0xFF0000;
+      break;
+    case 1:
+      color = 0x00FF00;
+      break;
+    case 2:
+      color = 0x0000FF;
+      break;
+  }
+
+  ws2812.fill(color, 0, 4);
+
+  // fast blink to indicate a mode switch
+  ws2812.setBrightness(led_brightness);
+  ws2812.show();
+  delay(300);
+  ws2812.setBrightness(0);
+  ws2812.show();
+  delay(220);
+  ws2812.setBrightness(led_brightness);
+  ws2812.show();
+  delay(300);
+  ws2812.setBrightness(0);
+  ws2812.show();
+}
+
 uint32_t led_get_color() {
   return ws2812.getPixelColor(0);
 }
 
 void led_update() {
+  device_config_t cfg = config_get_values();
+  switch (cfg.light_mode) {
+    case 0:
+      led_enabled = false;
+      break;
+    case 1:
+      led_enabled = true;
+      break;
+    // mode 2 controlled by timer
+  }
   led_set_brightness();
   ws2812.show();
 }

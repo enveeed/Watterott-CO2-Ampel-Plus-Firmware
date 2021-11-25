@@ -14,6 +14,8 @@ bool config_is_initialized() {
 }
 
 void config_set_factory_defaults() {
+  device_config_timer_t _default_timer_config =
+          {480, 1080}; // 8h, 18h
   device_config_t _default_config = {1,
                                      WIFI_WPA_SSID,
                                      WIFI_WPA_PASSWORD,
@@ -26,18 +28,16 @@ void config_set_factory_defaults() {
                                      MQTT_USERNAME,
                                      MQTT_PASSWORD,
                                      MQTT_FORMAT,
-                                     LIGHT_ENABLED,
-                                     BUZZER_ENABLED};
+                                     LIGHT_MODE,
+                                     BUZZER_MODE,
+                                     _default_timer_config,
+                                     _default_timer_config};
   config_store.write(_default_config);
 }
 
 void config_set_values(device_config_t new_config) {
-  led_set_color(LED_RED);
-  led_update();
   new_config.change_count++;
   config_store.write(new_config);
-  delay(50);
-  led_off();
 }
 
 device_config_t config_get_values() {

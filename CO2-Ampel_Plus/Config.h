@@ -55,11 +55,11 @@
 #define MQTT_FORMAT 0 
 
 //--- Buzzer configuration ---
-#define BUZZER_ENABLED true
-#define BUZZER_VOLUME 255 / 128 // 1-255
+#define BUZZER_MODE 1 // 1 = enabled, see TIMER_MODE_ON
+#define BUZZER_VOLUME 2 // 1-255
 
 //--- LED configuration ---
-#define LIGHT_ENABLED true
+#define LIGHT_MODE 1 // 1 = enabled, see TIMER_MODE_ON
 #define BRIGHTNESS 180          // 1-255
 #define BRIGHTNESS_DARK 5       // 1-100%
 #define NUMBER_OF_WS2312_PIXELS 4

@@ -139,6 +139,7 @@ void mqtt_message_received(char* topic, byte* payload, unsigned int length) {
     Serial.println(error.c_str());
     return;
   }
+  /* todo reactivate
   // Retrieve the values
   if (doc.containsKey("light_enabled")) {
     String light_enabled = doc["light_enabled"];
@@ -162,5 +163,5 @@ void mqtt_message_received(char* topic, byte* payload, unsigned int length) {
       cfg.buzzer_enabled = false;
     }
     config_set_values(cfg);
-  }
+  }*/
 }

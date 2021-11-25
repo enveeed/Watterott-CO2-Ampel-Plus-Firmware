@@ -7,6 +7,7 @@
 #include "DeviceConfig.h"
 #include "LED.h"
 #include "NetworkManager.h"
+#include "time.h"
 #if DISPLAY_OUTPUT > 0
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
@@ -37,6 +38,9 @@ void show_data(void)  // Daten anzeigen
   Serial.println(light);
   if (wifi_is_connected()) {
     print_wifi_status();
+  }
+  if (time_status() == TIME_STATUS_SET) {
+      time_print();
   }
   Serial.println();
 #endif
